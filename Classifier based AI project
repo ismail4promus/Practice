@@ -1,0 +1,102 @@
+import pandas as pd
+
+data = pd.read_csv("heart.csv")
+
+X=data.drop('target', axis = 1)
+y = data['target']
+
+#Split the dataset into 80% Training and 20% Test
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size = 0.20, random_state = 100)
+
+
+# # Naive Bayes
+
+from sklearn import preprocessing
+from sklearn.naive_bayes import GaussianNB
+
+nbc=GaussianNB()
+nbc.fit(X_train,y_train)
+y_test_prediction_nbc = nbc.predict(X_test)
+
+
+#print("NBC:\n",y_test_prediction_nbc)
+
+le=preprocessing.LabelEncoder()
+y_test=le.fit_transform(y_test)
+print("Prediction:  \n \n ", y_test_prediction_nbc)
+print("Test: \n", y_test)
+
+
+# # SVM Classifier 
+
+from sklearn.svm import SVC
+
+SVM_rbf = SVC(kernel='rbf', random_state=100, gamma=3.0,C=1.5 )
+svm_classifier=SVM_rbf.fit(X_train,y_train)
+
+# noinspection PyUnresolvedReferences
+y_test_prediction_svm = svm_classifier.predict(X_test)
+print("SVM:\n",y_test_prediction_svm)
+
+
+# # K-Nearest neighbor Classifier
+
+from sklearn.neighbors import KNeighborsClassifier
+knn_clf = KNeighborsClassifier(n_neighbors = 3)
+knn_clf.fit(X_train, y_train)
+knn_clf.score(X_test, y_test)
+
+y_test_pred_knn = knn_clf.predict(X_test)
+knn_clf.score(X_test, y_test)
+print(y_test_pred_knn)
+
+
+# # Decesion Tree
+
+from sklearn import tree
+dt_clf = tree.DecisionTreeClassifier(max_depth = 5) # Build
+dt_clf.fit(X_train, y_train) # Train
+
+y_test_pred_dt = dt_clf.predict(X_test)
+dt_clf.score(X_test, y_test)
+print(y_test_pred_dt)
+
+# # Random Forest Classifier
+
+from sklearn import ensemble
+rf_clf = ensemble.RandomForestClassifier(n_estimators = 100)
+rf_clf.fit(X_train, y_train)
+
+y_test_pred_rf = rf_clf.predict(X_test)
+rf_clf.score(X_test, y_test)
+print(y_test_pred_rf)
+
+
+# # Logistic Regression Classifier
+
+from sklearn.linear_model import LogisticRegression
+lr_clf = LogisticRegression()
+lr_clf.fit(X_train, y_train)
+lr_clf.score(X_test, y_test)
+
+y_test_pred_lr = lr_clf.predict(X_test)
+lr_clf.score(X_test, y_test)
+print(y_test_pred_lr)
+
+
+# # Classification Report
+
+from sklearn.metrics import classification_report
+
+print("SVM: \n ",classification_report(y_test,y_test_prediction_svm))
+print("NBC: \n ",classification_report(y_test,y_test_prediction_nbc))
+print("KNN: \n ",classification_report(y_test,y_test_pred_knn))
+print("Decesion Tree: \n ",classification_report(y_test,y_test_pred_dt))
+print("Random Forest: \n ",classification_report(y_test,y_test_pred_rf))
+print("Random Forest: \n ",classification_report(y_test,y_test_pred_lr))
+
+
+# # There are 5 classifiers, which are SVM, NBC, KNN, Decesion Tree, Random Forest. For the measurement of heart.csv dataset, NBC is the best choice
